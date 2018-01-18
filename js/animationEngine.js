@@ -1,4 +1,6 @@
-//create global requestAnimFrame var assigned to a function acception the callback
+/**
+ * Creates global requestAnimFrame var assigned to a function acception the callback
+ */
 window.requestAnimFrame = (function (callback) {
     return  window.requestAnimationFrame        ||
             window.webkitRequestAnimationFrame  ||
@@ -12,34 +14,48 @@ window.requestAnimFrame = (function (callback) {
     };
 })();
 
-//Constructor
+/**
+ * AnimationEngine's Constructor
+ */
 function AnimationEngine() {
 
     this.animationFrameCallback = undefined;
+    
     this.prev_time_log = undefined;
     this.is_running = true;
-
     this.fps = 0;
     this.delta_time = 0;
 }
 
-//Use to set the callback function which you will be using for each frame (normally called 60/sec)
+/**
+ * Use to set the callback function which you will be using for each frame (normally called 60/sec)
+ * @param {*} callback 
+ */
 AnimationEngine.prototype.setAnimationFrameCallback = function(callback)
 {
     this.animationFrameCallback = callback;
 }
 
+/**
+ * Starts the animation engine
+ */
 AnimationEngine.prototype.start = function()
 {
     this.is_running = true;
     this.animate();
 }
 
+/**
+ * Stops the animation engine
+ */
 AnimationEngine.prototype.stop = function()
 {
     this.is_running = false;
 }
 
+/**
+ * Main function
+ */
 AnimationEngine.prototype.animate = function()
 {
     var _this = this;
