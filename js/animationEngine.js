@@ -20,6 +20,7 @@ window.requestAnimFrame = (function (callback) {
 function AnimationEngine() {
 
     this.animationFrameCallback = undefined;
+    this.subscribtions = [];
     
     this.prev_time_log = undefined;
     this.is_running = true;
@@ -28,12 +29,13 @@ function AnimationEngine() {
 }
 
 /**
- * Use to set the callback function which you will be using for each frame (normally called 60/sec)
- * @param {*} callback 
+ * Use to subscribe a drawable object which will be updated for each frame (normally called 60/sec)
+ * @param {*} drawableObject 
  */
-AnimationEngine.prototype.setAnimationFrameCallback = function(callback)
+AnimationEngine.prototype.subscribeAnimationFrameCallback = function(drawableObject)
 {
-    this.animationFrameCallback = callback;
+    drawableObject.setEngine(this);
+    this.subscribtions.push(drawableObject);
 }
 
 /**
@@ -58,7 +60,7 @@ AnimationEngine.prototype.stop = function()
  */
 AnimationEngine.prototype.animate = function()
 {
-    var _this = this;
+    let _this = this;
     
      if (!this.prev_time_log) {
         this.prev_time_log = new Date().getTime();
@@ -70,6 +72,7 @@ AnimationEngine.prototype.animate = function()
         return;
     }
     
+    //calculate dt in seconds
     this.delta_time = (new Date().getTime() - this.prev_time_log) / 1000;
 
     this.prev_time_log = new Date().getTime();
@@ -77,7 +80,11 @@ AnimationEngine.prototype.animate = function()
     //calculate fps
     this.fps = 1 / this.delta_time;
 
-    this.animationFrameCallback();
+    //call each subscribed object
+    this.subscribtions.forEach(function(drawableObject) {
+
+        drawableObject.update();
+    });
 
     if (this.is_running) {
         window.requestAnimFrame(function () {
