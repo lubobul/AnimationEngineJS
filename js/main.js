@@ -3,12 +3,13 @@ window.onload  = function() {
     var c = document.getElementById("canvas");
     EngineUtils.canvasContext = c.getContext("2d");
 
-    var aniEngine = new AnimationEngine("");
+    var aniEngine = new AnimationEngine();
 
     var circle = new Circle(20, 100, 100, "#aaa");
 
     aniEngine.addDrawableObject(circle);
 
+    //Used to override update and allows you to implement any custom motion here
     circle.setUpdateCallback((_this)=>{
         
         console.log("fps outside =>", Math.round(_this.engine.fps));
@@ -16,10 +17,12 @@ window.onload  = function() {
 
     aniEngine.start();
 
+    circle.moveTo(300, 100, 100);
+
     setTimeout(()=>{
 
         aniEngine.stop();
-    }, 3000);
+    }, 5000);
     
 }
 
