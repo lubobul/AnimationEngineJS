@@ -32,7 +32,7 @@ function AnimationEngine() {
  * Use to subscribe a drawable object which will be updated for each frame (normally called 60/sec)
  * @param {*} drawableObject 
  */
-AnimationEngine.prototype.subscribeAnimationFrameCallback = function(drawableObject)
+AnimationEngine.prototype.addDrawableObject = function(drawableObject)
 {
     drawableObject.setEngine(this);
     this.subscribtions.push(drawableObject);
@@ -79,6 +79,8 @@ AnimationEngine.prototype.animate = function()
 
     //calculate fps
     this.fps = 1 / this.delta_time;
+
+    EngineUtils.clearCanvas();
 
     //call each subscribed object
     this.subscribtions.forEach(function(drawableObject) {
