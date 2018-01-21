@@ -1,4 +1,44 @@
-//Holding core functionality such as Translate, Rotate and Scale
+/**
+ * Base action class
+ */
+function Action(){
+
+    this.action = undefined; 
+}
+
+/**
+ * Used to chain async actions
+ */
+Action.prototype.attach = function(action){
+
+    this.action = action;
+    return this.action;
+}
+
+/**
+ * MoveTo Action 
+ * @param {*} x 
+ * @param {*} y 
+ * @param {*} velocity 
+ */
+function MoveTo(x, y, velocity){
+
+    Action.call(this);
+    this.x = x;
+    this.y = y;
+    this.velocity = velocity;
+}
+
+MoveTo.prototype = Object.create(Action.prototype);
+
+/**
+ * Acts upon a drawable object
+ * @param {*} drawableObject 
+ */
+MoveTo.prototype.act = function(drawableObject){
+
+    drawableObject.x = drawableObject.x + (this.velocity*drawableObject.engine.delta_time);
+}
 
 /**
 * DrawableObject constructor
@@ -35,6 +75,16 @@ DrawableObject.prototype.setUpdateCallback = function(updateCallback)
     this.updateCallback = updateCallback;
 }
 
+/**
+ * Adds a new action to the object
+ * @param {*} action 
+ */
+DrawableObject.prototype.addAction = function(action)
+{
+    //TODO make sure you figure this out in a proper way
+    this.actions.push(action);
+}
+
 
 function Circle(radius, x, y, color){
 
@@ -45,25 +95,8 @@ function Circle(radius, x, y, color){
 Circle.prototype = Object.create(DrawableObject.prototype);
 
 /**
- * Moves obect to postion
- * @param {*} x 
- * @param {*} y 
- * @param {*} velocity 
- */
-Circle.prototype.moveTo = function(x, y, velocity)
-{
-    //TODO make sure you figure this out in a proper way
-    this.actions.push({
-        x : x,
-        y : y,
-        v: velocity,
-        act: EngineUtils.moveTo
-    });
-}
-
-/**
  * Update function which is called for each frame
- * @param {*} callback 
+ * 
  */
 Circle.prototype.update = function()
 {
@@ -78,7 +111,7 @@ Circle.prototype.update = function()
     this.actions.forEach(function(action) {
 
         //figure out how to call different actions with different signature
-        action.act(_this, action.x, action.y, action.v);
+        action.act(_this);
     });
     
     if(this.updateCallback)

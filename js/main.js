@@ -17,7 +17,7 @@ window.onload  = function() {
 
     aniEngine.start();
 
-    circle.moveTo(300, 100, 100);
+    circle.addAction(new MoveTo(200,200,300));
 
     setTimeout(()=>{
 

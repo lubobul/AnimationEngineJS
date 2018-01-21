@@ -1,5 +1,5 @@
 /**
- * Creates global requestAnimFrame var assigned to a function acception the callback
+ * Creates global requestAnimFrame var assigned to a function accepting the callback
  */
 window.requestAnimFrame = (function (callback) {
     return  window.requestAnimationFrame        ||
