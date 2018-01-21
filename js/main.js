@@ -17,7 +17,13 @@ window.onload  = function() {
 
     aniEngine.start();
 
-    circle.addAction(new MoveTo(200,200,300));
+    var actionRoot = new MoveTo(200,200, 100);
+
+    actionRoot.attach(new MoveTo(0,0, 110))
+    .attach(new MoveTo(-100, 200, 100));
+    
+
+    circle.addAction(actionRoot);
 
     setTimeout(()=>{
 

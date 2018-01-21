@@ -3,7 +3,8 @@
  */
 function Action(){
 
-    this.action = undefined; 
+    this.action = null; 
+    this.drawableObject = null;
 }
 
 /**
@@ -13,6 +14,10 @@ Action.prototype.attach = function(action){
 
     this.action = action;
     return this.action;
+}
+
+Action.prototype.addedBy = function(drawableObject){
+    this.drawableObject = drawableObject;
 }
 
 /**
@@ -26,18 +31,31 @@ function MoveTo(x, y, velocity){
     Action.call(this);
     this.x = x;
     this.y = y;
+    this.v_y = 0;
+    this.v_x = 0;
     this.velocity = velocity;
 }
 
 MoveTo.prototype = Object.create(Action.prototype);
 
+MoveTo.prototype.addedBy = function(drawableObject){
+
+    this.drawableObject = drawableObject;
+
+    var polar_coordinates = EngineUtils.cartesianToPolar(this.x - drawableObject.x, this.y - drawableObject.y);
+
+    this.v_x = this.velocity * Math.cos(polar_coordinates.tetha);
+    this.v_y = this.velocity * Math.sin(polar_coordinates.tetha);
+}
+
 /**
  * Acts upon a drawable object
  * @param {*} drawableObject 
  */
-MoveTo.prototype.act = function(drawableObject){
+MoveTo.prototype.act = function(){
 
-    drawableObject.x = drawableObject.x + (this.velocity*drawableObject.engine.delta_time);
+    this.drawableObject.x = this.drawableObject.x + (this.v_x * this.drawableObject.engine.delta_time);
+    this.drawableObject.y = this.drawableObject.y + (this.v_y * this.drawableObject.engine.delta_time);
 }
 
 /**
@@ -81,7 +99,14 @@ DrawableObject.prototype.setUpdateCallback = function(updateCallback)
  */
 DrawableObject.prototype.addAction = function(action)
 {
-    //TODO make sure you figure this out in a proper way
+
+    let _action = action; 
+
+    while(_action){
+        _action.addedBy(this);
+        _action = _action.action;
+    }
+
     this.actions.push(action);
 }
 
@@ -100,7 +125,6 @@ Circle.prototype = Object.create(DrawableObject.prototype);
  */
 Circle.prototype.update = function()
 {
-    let _this = this;
 
     this.ctx.beginPath();
     this.ctx.arc(this.x, this.y, this.radius, 0, 2 * Math.PI, false);
@@ -109,9 +133,13 @@ Circle.prototype.update = function()
     this.ctx.fill();
 
     this.actions.forEach(function(action) {
+        let _action = action; 
 
-        //figure out how to call different actions with different signature
-        action.act(_this);
+        while(_action){
+            _action.act();
+            _action = _action.action;
+        }
+        
     });
     
     if(this.updateCallback)
