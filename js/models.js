@@ -36,6 +36,7 @@ function MoveTo(x, y, velocity){
     this.velocity = velocity;
 }
 
+//MoveTo extends Action
 MoveTo.prototype = Object.create(Action.prototype);
 
 MoveTo.prototype.addedBy = function(drawableObject){
@@ -110,13 +111,38 @@ DrawableObject.prototype.addAction = function(action)
     this.actions.push(action);
 }
 
+DrawableObject.prototype.update = function()
+{
+    this.actions.forEach(function(action) {
+        let _action = action; 
 
+        while(_action){
+            _action.act();
+            _action = _action.action;
+        }
+        
+    });
+    
+    if(this.updateCallback)
+    {
+        this.updateCallback(this);
+    }
+}
+
+/**
+ * Circle's conscructor
+ * @param {*} radius 
+ * @param {*} x 
+ * @param {*} y 
+ * @param {*} color 
+ */
 function Circle(radius, x, y, color){
 
     this.radius = radius;
     DrawableObject.call(this, x, y, color);
 }
 
+//Circle extends DrawableObject
 Circle.prototype = Object.create(DrawableObject.prototype);
 
 /**
@@ -132,18 +158,5 @@ Circle.prototype.update = function()
     this.ctx.fillStyle = this.color;
     this.ctx.fill();
 
-    this.actions.forEach(function(action) {
-        let _action = action; 
-
-        while(_action){
-            _action.act();
-            _action = _action.action;
-        }
-        
-    });
-    
-    if(this.updateCallback)
-    {
-        this.updateCallback(this);
-    }
+    DrawableObject.prototype.update.call(this);
 }

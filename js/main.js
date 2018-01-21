@@ -21,7 +21,6 @@ window.onload  = function() {
 
     actionRoot.attach(new MoveTo(0,0, 110))
     .attach(new MoveTo(-100, 200, 100));
-    
 
     circle.addAction(actionRoot);
 
