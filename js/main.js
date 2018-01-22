@@ -1,28 +1,33 @@
 window.onload  = function() {
 
-    var c = document.getElementById("canvas");
-    EngineUtils.canvasContext = c.getContext("2d");
+    var canvas = document.getElementById("canvas");
+    EngineUtils.setCanvas(canvas);
 
     var aniEngine = new AnimationEngine();
 
     var circle = new Circle(20, 100, 100, "#aaa");
+    var circle2 = new Circle(40, 100, 200, "green");
 
-    aniEngine.addDrawableObject(circle);
+    aniEngine.addShape(circle);
+    aniEngine.addShape(circle2);
 
     //Used to override update and allows you to implement any custom motion here
-    circle.setUpdateCallback((_this)=>{
+    circle.setUpdateCallback((shape)=>{
         
-        console.log("fps outside =>", Math.round(_this.engine.fps));
+        console.log("fps outside =>", Math.round(shape.engine.fps));
     });
 
     aniEngine.start();
 
     var actionRoot = new MoveTo(200,200, 100);
 
-    actionRoot.attach(new MoveTo(0,0, 110))
-    .attach(new MoveTo(-100, 200, 100));
+    //actionRoot.attach(new MoveTo(0,0, 110))
+    //.attach(new MoveTo(-100, 200, 100));
+
+    var actionRoot2 = new MoveTo(200,200, 100);
 
     circle.addAction(actionRoot);
+    circle2.addAction(actionRoot2);
 
     setTimeout(()=>{
 
