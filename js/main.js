@@ -20,8 +20,8 @@ window.onload  = function() {
 
     aniEngine.start();
 
-    var actionRoot = new Scale(2, 0.2);//new MoveTo(200,200, 200);
-    actionRoot.attach(new MoveTo(200,200, 100));
+    var actionRoot = new Scale(3.14, 0.2);//new MoveTo(200,200, 200);
+    //actionRoot.attach(new MoveTo(200,200, 100));
     //actionRoot.attach(new MoveTo(0,0, 110))
     //.attach(new MoveTo(-100, 200, 100));
 
@@ -35,7 +35,7 @@ window.onload  = function() {
 
         aniEngine.stop();
         console.log("Engine terminated");
-    }, 5000);
+    }, 10000);
     
 }
 

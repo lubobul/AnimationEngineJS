@@ -42,6 +42,18 @@ class Scale extends Action
         this.shapeTmp = null;
     }
 
+    addedBy(shape)
+    {
+        super.addedBy(shape);
+        this.shapeTmp = new Shape(this.shape.x, this.shape.y, this.shape.color);
+    }
+
+    updateShapeTmp()
+    {
+        this.shapeTmp.x = this.shape.x;
+        this.shapeTmp.y = this.shape.y;
+    }
+
     /**
      * Acts upon a drawable object
      * @param {*} shape 
@@ -57,20 +69,22 @@ class Scale extends Action
             this.currentFactor -= this.step * this.shape.engine.delta_time;
         }
         
-        this.shapeTmp = new Shape(this.shape.x, this.shape.y, this.shape.color);
+        this.updateShapeTmp();
 
-        //EngineUtils.canvasContext.translate(this.shape.x, this.shape.y);
         EngineUtils.canvasContext.scale(this.currentFactor, this.currentFactor);
 
-        this.shape.x = this.shapeTmp.x/this.currentFactor;
-        this.shape.y = this.shapeTmp.y/this.currentFactor;
+        this.shape.x = this.shape.x/this.currentFactor;
+        this.shape.y = this.shape.y/this.currentFactor;
         
         this.shape.draw();
-        EngineUtils.canvasContext.resetTransform();
-        this.shape.x = this.shapeTmp.x;
-        this.shape.y = this.shapeTmp.y;
+        
         //resets previously added transformations and the next one is done based on base transformation value
         //alternatively it becomes exponential
+        EngineUtils.canvasContext.resetTransform();
+        
+        this.shape.x = this.shapeTmp.x;
+        this.shape.y = this.shapeTmp.y;
+        
         
         //console.log("x : y -> ", this.shape.x, " : ", this.shape.y)
         
@@ -117,7 +131,7 @@ class MoveTo extends Action
     {
         this.shape.x = this.shape.x + (this.v_x * this.shape.engine.delta_time);
         this.shape.y = this.shape.y + (this.v_y * this.shape.engine.delta_time);
-        console.log("x : y -> ", this.shape.x, " : ", this.shape.y)
+        //this.shape.draw();
     }
 }
 
@@ -218,7 +232,7 @@ class Circle extends Shape
      */
     constructor(radius, x, y, color)
     {
-        super(x-radius, y, color);
+        super(x, y, color);
         this.radius = radius;    
     }
 
@@ -237,7 +251,7 @@ class Circle extends Shape
      */
     update()
     {
-        super.update()
-        this.draw();   
+        super.update();
+        this.draw(); 
     }
 }

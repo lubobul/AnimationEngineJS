@@ -9,6 +9,7 @@ window.EngineUtils = {
     clearCanvas : function()
     {    
         EngineUtils.canvasContext.clearRect(0, 0, EngineUtils.canvas.width, EngineUtils.canvas.height);
+        //EngineUtils.canvasContext.resetTransform();
     },
 
     /**
