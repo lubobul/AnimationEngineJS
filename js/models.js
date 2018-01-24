@@ -1,10 +1,10 @@
 /**
  * Base action class
  */
-class Action{
-
-    constructor(){
-
+class Action
+{
+    constructor()
+    {
         this.next = null; 
         this.shape = null;
     }
@@ -12,13 +12,14 @@ class Action{
     /**
      * Used to chain async actions
      */
-    attach(action){
-
+    attach(action)
+    {
         this.next = action;
         return this.next;
     }
 
-    addedBy(shape){
+    addedBy(shape)
+    {
         this.shape = shape;
     }
 
@@ -26,25 +27,53 @@ class Action{
 
 
 
-class Scale extends Action{
-
+class Scale extends Action
+{
     /**
     * Scale Action
     * @param {*} factor 
     */
-    constructor(factor){
-
+    constructor(factor, step)
+    {
         super();
+        this.step = step;
         this.factor = factor;
+        this.currentFactor = 1;
+        this.shapeTmp = null;
     }
 
     /**
      * Acts upon a drawable object
      * @param {*} shape 
      */
-    act(){
+    act()
+    {
+        if(this.factor > 1)
+        {
+            this.currentFactor += this.step * this.shape.engine.delta_time;
+        }
+        else
+        {
+            this.currentFactor -= this.step * this.shape.engine.delta_time;
+        }
+        
+        this.shapeTmp = new Shape(this.shape.x, this.shape.y, this.shape.color);
 
-        EngineUtils.canvasContext.scale(factor, factor);
+        //EngineUtils.canvasContext.translate(this.shape.x, this.shape.y);
+        EngineUtils.canvasContext.scale(this.currentFactor, this.currentFactor);
+
+        this.shape.x = this.shapeTmp.x/this.currentFactor;
+        this.shape.y = this.shapeTmp.y/this.currentFactor;
+        
+        this.shape.draw();
+        EngineUtils.canvasContext.resetTransform();
+        this.shape.x = this.shapeTmp.x;
+        this.shape.y = this.shapeTmp.y;
+        //resets previously added transformations and the next one is done based on base transformation value
+        //alternatively it becomes exponential
+        
+        //console.log("x : y -> ", this.shape.x, " : ", this.shape.y)
+        
     }
 }
 
@@ -55,10 +84,11 @@ class Scale extends Action{
  * @param {*} velocity 
  */
 
-class MoveTo extends Action{
+class MoveTo extends Action
+{
 
-    constructor(x, y, velocity){
-
+    constructor(x, y, velocity)
+    {
         super();
 
         this.x = x;
@@ -68,10 +98,11 @@ class MoveTo extends Action{
         this.velocity = velocity;
     }
 
-    addedBy(shape){
+    addedBy(shape)
+    {
 
         this.shape = shape;
-
+        
         var polar_coordinates = EngineUtils.cartesianToPolar(this.x - shape.x, this.y - shape.y);
 
         this.v_x = this.velocity * Math.cos(polar_coordinates.tetha);
@@ -82,26 +113,28 @@ class MoveTo extends Action{
      * Acts upon a drawable object
      * @param {*} shape 
      */
-    act(){
-
+    act()
+    {
         this.shape.x = this.shape.x + (this.v_x * this.shape.engine.delta_time);
         this.shape.y = this.shape.y + (this.v_y * this.shape.engine.delta_time);
+        console.log("x : y -> ", this.shape.x, " : ", this.shape.y)
     }
 }
 
 /**
  * Base shape
  */
-class Shape{
+class Shape
+{
 
     /**
      * Shape constructor
      * @param {*} x 
      * @param {*} y 
      * @param {*} color 
-     * @param {*} type 
      */
-    constructor (x, y, color, type) {
+    constructor (x, y, color) 
+    {
 
         this.x = x;
         this.y = y;
@@ -152,11 +185,13 @@ class Shape{
 
     update()
     {
-        this.actions.forEach(function(action) {
+        this.actions.forEach(function(action) 
+        {
 
             let _action = action; 
 
-            while(_action){
+            while(_action)
+            {
                 _action.act();
                 _action = _action.next;
             }
@@ -168,9 +203,11 @@ class Shape{
             this.updateCallback(this);
         }
     }
+
 }
 
-class Circle extends Shape {
+class Circle extends Shape 
+{
     
     /**
      * Circle's conscructor
@@ -179,10 +216,19 @@ class Circle extends Shape {
      * @param {*} y 
      * @param {*} color 
      */
-    constructor(radius, x, y, color){
-
-        super(x, y, color);
+    constructor(radius, x, y, color)
+    {
+        super(x-radius, y, color);
         this.radius = radius;    
+    }
+
+    draw()
+    {
+        this.ctx.beginPath();
+        this.ctx.arc(this.x, this.y, this.radius, 0, 2 * Math.PI, false);
+        this.ctx.closePath();
+        this.ctx.fillStyle = this.color;
+        this.ctx.fill();
     }
     
     /**
@@ -191,12 +237,7 @@ class Circle extends Shape {
      */
     update()
     {
-        this.ctx.beginPath();
-        this.ctx.arc(this.x, this.y, this.radius, 0, 2 * Math.PI, false);
-        this.ctx.closePath();
-        this.ctx.fillStyle = this.color;
-        this.ctx.fill();
-    
-        super.update();
+        super.update()
+        this.draw();   
     }
 }

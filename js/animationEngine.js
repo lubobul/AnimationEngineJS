@@ -17,9 +17,10 @@ window.requestAnimFrame = (function (callback) {
 /**
  * AnimationEngine's Constructor
  */
-class AnimationEngine {
-
-    constructor(){
+class AnimationEngine 
+{
+    constructor()
+    {
         this.animationFrameCallback = undefined;
         this.subscribtions = [];
         
@@ -63,7 +64,8 @@ class AnimationEngine {
     {
         let _this = this;
 
-         if (!this.prev_time_log) {
+        if (!this.prev_time_log) 
+        {
             this.prev_time_log = new Date().getTime();
 
             window.requestAnimFrame(function () {
@@ -89,7 +91,8 @@ class AnimationEngine {
             shape.update();
         });
 
-        if (this.is_running) {
+        if (this.is_running) 
+        {
             window.requestAnimFrame(function () {
                 _this.animate();
             });

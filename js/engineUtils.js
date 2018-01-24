@@ -1,19 +1,14 @@
 window.EngineUtils = {
     
-    setCanvas : function(canvas){
+    setCanvas : function(canvas)
+    {
         EngineUtils.canvas = canvas;
         EngineUtils.canvasContext = canvas.getContext("2d");
     },
 
-    clearCanvas : function(){
-
-        EngineUtils.canvasContext.save();
-    
-        EngineUtils.canvasContext.setTransform(1, 0, 0, 1, 0, 0);
+    clearCanvas : function()
+    {    
         EngineUtils.canvasContext.clearRect(0, 0, EngineUtils.canvas.width, EngineUtils.canvas.height);
-    
-        EngineUtils.canvasContext.restore();
-        
     },
 
     /**
